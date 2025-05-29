@@ -71,11 +71,29 @@ int main() {
     spinButton.setFillColor(sf::Color::Red);
     spinButton.setPosition(350, 500);
 
-    while (window.isOpen()) {
+     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
+            if (event.type == sf::Event::MouseButtonPressed) {
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                if (spinButton.getGlobalBounds().contains(mousePos.x, mousePos.y)) {
+                    const char* spinMessage = "SPIN";
+                    send(clientSocket, spinMessage, 4, 0);
+                    cout << "Da gui yeu cau SPIN!" << endl;
+
+                    // Nhận kết quả từ server
+                    char resultBuffer[1024];
+                    int resultBytes = recv(clientSocket, resultBuffer, 1023, 0);
+                    if (resultBytes > 0) {
+                        resultBuffer[resultBytes] = '\0';
+                        cout << "Ket qua tu server: " << resultBuffer << endl;
+                    } else {
+                        cerr << "Khong nhan duoc ket qua: " << WSAGetLastError() << endl;
+                    }
+                }
+            }
         }
 
         window.clear(sf::Color::White);
