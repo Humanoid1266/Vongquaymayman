@@ -1,6 +1,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iostream>
+using namespace std;
 #pragma comment(lib, "Ws2_32.lib")
 
 // Gửi yêu cầu quay vòng (client gọi)
@@ -15,16 +16,16 @@ int receiveResult(SOCKET sock) {
     char buf[16] = "";
     int bytes = recv(sock, buf, sizeof(buf), 0);
     if (bytes > 0) {
-        return std::atoi(buf);
+        return atoi(buf);
     }
     return -1;
 }
 
 // Nhận yêu cầu từ client (server gọi)
-std::string receiveRequest(SOCKET clientSock) {
+string receiveRequest(SOCKET clientSock) {
     char buf[16] = "";
     int bytes = recv(clientSock, buf, sizeof(buf), 0);
-    if (bytes > 0) return std::string(buf, bytes);
+    if (bytes > 0) return string(buf, bytes);
     return "";
 }
 
