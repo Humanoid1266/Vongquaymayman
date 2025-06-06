@@ -7,12 +7,24 @@
 #define PORT 2808 
 using namespace std;
 
-while (true) {
-    SOCKET clientSocket = accept(serverSocket, NULL, NULL);
-    if (clientSocket == INVALID_SOCKET) {
-        cerr << "Chap nhan ket noi khong thanh cong" << WSAGetLastError() << endl;
-        continue;
+// Hàm xử lý mỗi client trong một luồng riêng
+void handleClient(SOCKET clientSocket) {
+    char buffer[1024];
+
+    while (true) {
+        int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+        if (bytesReceived <= 0) {
+            cerr << "Client ngắt kết nối hoặc lỗi: " << WSAGetLastError() << endl;
+            break;
+        }
+
+        buffer[bytesReceived] = '\0';
+        cout << "Dữ liệu nhận từ client: " << buffer << endl;
+
+ 
+        const char* msg = "Server da nhan thong diep!";
+        send(clientSocket, msg, strlen(msg) + 1, 0);
     }
-    cout << "Client moi ket noi!" << endl;
-    clientThreads.emplace_back(thread(handleClient, clientSocket));
+
+    closesocket(clientSocket);
 }
