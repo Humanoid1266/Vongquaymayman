@@ -4,7 +4,7 @@
 
 using namespace std;
 
-int main() {
+int interface() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "Vong Quay May Man");
 
     sf::CircleShape wheel(200);
