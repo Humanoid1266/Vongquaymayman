@@ -1,3 +1,5 @@
 #include <iostream>
-#include "../Server/server.cpp"
+#include "multi-client/multi-client.cpp"
+#include "Server/server.cpp"
 #include "interface.cpp"
+
