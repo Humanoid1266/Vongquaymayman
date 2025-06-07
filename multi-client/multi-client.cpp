@@ -14,12 +14,12 @@ void handleClient(SOCKET clientSocket) {
     while (true) {
         int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
         if (bytesReceived <= 0) {
-            cerr << "Client ngắt kết nối hoặc lỗi: " << WSAGetLastError() << endl;
+            cerr << "Client ngat ket noi hoac loi: " << WSAGetLastError() << endl;
             break;
         }
 
         buffer[bytesReceived] = '\0';
-        cout << "Dữ liệu nhận từ client: " << buffer << endl;
+        cout << "Du lieu nhan tu client: " << buffer << endl;
 
  
         const char* msg = "Server da nhan thong diep!";
