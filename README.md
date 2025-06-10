@@ -35,11 +35,9 @@ Người chơi (client) có thể kết nối đến máy chủ (server) và th�
 
 ###  Build và chạy Server
 ```bash
-g++ server.cpp -o server -lws2_32
-./server
+g++ main.cpp -o <____> -lws2_32 -lsfml-graphics -lsfml-window -lsfml-system
+./<___>.exe
 
-g++ client.cpp -o client -lws2_32 -lsfml-graphics -lsfml-window -lsfml-system
-./client
 
 ✅ Tính năng
 Kết nối nhiều client đồng thời
