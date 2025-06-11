@@ -45,7 +45,6 @@ struct RewardConfig {
     }
 };
 
-// Sinh thưởng ngẫu nhiên, dùng generator từ bên ngoài để giữ trạng thái
 int generateReward(const RewardConfig& config, mt19937& gen) {
     uniform_real_distribution<> dis(0.0, 1.0);
     double randomValue = dis(gen);
@@ -57,7 +56,7 @@ int generateReward(const RewardConfig& config, mt19937& gen) {
             return reward.first;
         }
     }
-    return 0; // Trường hợp lỗi hiếm gặp
+    return 0;
 }
 
 string processSpinRequest(const string& request, const RewardConfig& config, mt19937& gen) {
@@ -66,28 +65,4 @@ string processSpinRequest(const string& request, const RewardConfig& config, mt1
 
     int reward = generateReward(config, gen);
     return "RESULT:" + to_string(reward);
-}
-
-int main() {
-    try {
-        RewardConfig config;
-        random_device rd;
-        mt19937 gen(rd());
-
-        string request;
-        while (true) {
-            cout << "Nhap 'SPIN' de quay (hoac 'EXIT' de thoat): ";
-            getline(cin, request);
-
-            if (request == "EXIT") break;
-
-            string result = processSpinRequest(request, config, gen);
-            cout << result << endl;
-        }
-    } catch (const exception& e) {
-        cerr << "Loi: " << e.what() << endl;
-        return 1;
-    }
-
-    return 0;
 }
