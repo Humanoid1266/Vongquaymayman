@@ -3,13 +3,17 @@
 #include <random>
 #include <thread>
 #include <vector>
+
 #pragma comment(lib, "ws2_32.lib")
-#define PORT 2808 
+#define PORT 2808
+
 using namespace std;
 
 // Hàm xử lý mỗi client trong một luồng riêng
-void handleClient(SOCKET clientSocket) {
+void handleClient(SOCKET clientSocket, string (*processRequest)(const string&, const RewardConfig&, mt19937&), RewardConfig config) {
     char buffer[1024];
+    random_device rd;
+    mt19937 gen(rd()); // Sửa lỗi bằng cách thêm ()
 
     while (true) {
         int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
@@ -21,9 +25,10 @@ void handleClient(SOCKET clientSocket) {
         buffer[bytesReceived] = '\0';
         cout << "Du lieu nhan tu client: " << buffer << endl;
 
- 
-        const char* msg = "Server da nhan thong diep!";
-        send(clientSocket, msg, strlen(msg) + 1, 0);
+        string request(buffer);
+        string response = processRequest(request, config, gen);
+        int score = (response.find("RESULT:") != string::npos) ? stoi(response.substr(7)) : 0;
+        sendResult(clientSocket, score); // Sử dụng hàm từ network-communication
     }
 
     closesocket(clientSocket);
