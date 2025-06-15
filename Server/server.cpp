@@ -3,39 +3,50 @@
 #include <string>
 #include <map>
 #include <stdexcept>
+#include <fstream>
+#include <sstream>
+#include <cmath>
 
 using namespace std;
 
-// Cấu trúc quản lý phần thưởng với xác suất
 struct RewardConfig {
-    map<int, double> rewards; // <giá trị phần thưởng, xác suất>
+    map<int, double> rewards;
     double totalProbability = 0.0;
 
     RewardConfig() {
-        // Khởi tạo danh sách phần thưởng với xác suất
-        rewards[100] = 0.30; // 30% cơ hội
-        rewards[200] = 0.25; // 25% cơ hội
-        rewards[300] = 0.15; // 15% cơ hội
-        rewards[0] = 0.10;   // 10% cơ hội (không có thưởng)
-        rewards[50] = 0.15;  // 15% cơ hội
-        rewards[150] = 0.05; // 5% cơ hội (phần thưởng hiếm)
+        if (!loadFromFile("reward_config.txt")) {
+            throw runtime_error("Khong the doc file reward_config.txt");
+        }
+    }
 
-        // Tính tổng xác suất
-        for (const auto& reward : rewards) {
-            totalProbability += reward.second;
+    bool loadFromFile(const string& filename) {
+        ifstream file(filename);
+        if (!file.is_open()) return false;
+
+        rewards.clear();
+        totalProbability = 0.0;
+
+        string line;
+        int value;
+        double prob;
+        while (getline(file, line)) {
+            istringstream iss(line);
+            if (!(iss >> value >> prob)) continue;
+            rewards[value] = prob;
+            totalProbability += prob;
         }
-        if (abs(totalProbability - 1.0) > 0.01) {
-            throw runtime_error("Tong xac suat phai gan bang 1.0");
+        file.close();
+
+        if (fabs(totalProbability - 1.0) > 0.01) {
+            throw runtime_error("Tong xac suat phai gan bang 1.0 (dang: " + to_string(totalProbability) + ")");
         }
+
+        return true;
     }
 };
 
-// Hàm tạo phần thưởng ngẫu nhiên với xác suất
-int generateReward() {
-    static RewardConfig config;
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dis(0.0, 1.0);
+int generateReward(const RewardConfig& config, mt19937& gen) {
+    uniform_real_distribution<> dis(0.0, 1.0);
     double randomValue = dis(gen);
 
     double cumulativeProbability = 0.0;
@@ -45,18 +56,13 @@ int generateReward() {
             return reward.first;
         }
     }
-    return 0; // Giá trị mặc định nếu có lỗi
+    return 0;
 }
 
-// Hàm xử lý yêu cầu quay
-string processSpinRequest(const string& request) {
-    if (request.empty()) {
-        return "ERROR: Yeu cau rong";
-    }
-    if (request != "SPIN") {
-        return "ERROR: Yeu cau khong hop le";
-    }
+string processSpinRequest(const string& request, const RewardConfig& config, mt19937& gen) {
+    if (request.empty()) return "ERROR: Yeu cau rong";
+    if (request != "SPIN") return "ERROR: Yeu cau khong hop le";
 
-    int reward = generateReward();
+    int reward = generateReward(config, gen);
     return "RESULT:" + to_string(reward);
 }
