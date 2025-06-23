@@ -59,4 +59,35 @@ function loadStats() {
 }
 
 loadStats();
+function getRandomReward() {
+    const rand = Math.random();
+    let cumulativeProb = 0;
+    for (const reward of rewards) {
+        cumulativeProb += reward.probability;
+        if (rand <= cumulativeProb) return reward;
+    }
+    return rewards[rewards.length - 1]; // fallback nếu có sai sót cộng dồn
+}
+
+function calculateWheelAngle(rewardId) {
+    const index = rewardId - 1; // vì ID bắt đầu từ 1
+    const segmentCount = 5; // tổng số phần thưởng
+    const segmentAngle = 360 / segmentCount;
+    const baseAngle = index * segmentAngle + segmentAngle / 2;
+    const randomSpins = Math.floor(Math.random() * 3 + 5) * 360; // quay 5–7 vòng
+    const randomOffset = Math.random() * 10 - 5; // lệch góc ngẫu nhiên ±5 độ
+    return randomSpins + baseAngle + randomOffset;
+}
+
+const rateLimiter = new Map();
+
+function isRateLimited(ws) {
+    const now = Date.now();
+    const lastSpin = rateLimiter.get(ws) || 0;
+    const cooldown = 3000; // 3 giây cooldown
+    if (now - lastSpin < cooldown) return true;
+    rateLimiter.set(ws, now);
+    return false;
+}
+
 
