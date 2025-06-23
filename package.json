@@ -1,0 +1,65 @@
+{
+  "name": "lucky-wheel-pro",
+  "version": "2.0.0",
+  "description": "🎡 Game vòng quay may mắn online chuyên nghiệp với WebSocket, thống kê real-time và nhiều tính năng hấp dẫn",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js --watch server.js --watch reward_config.json",
+    "test": "node test/test.js",
+    "clean": "rm -f game_stats.json",
+    "backup": "cp game_stats.json game_stats_backup_$(date +%Y%m%d_%H%M%S).json",
+    "production": "NODE_ENV=production node server.js"
+  },
+  "keywords": [
+    "lucky-wheel", 
+    "websocket", 
+    "game", 
+    "nodejs", 
+    "multiplayer",
+    "gambling",
+    "casino",
+    "wheel-of-fortune",
+    "realtime-stats",
+    "responsive-design"
+  ],
+  "author": {
+    "name": "Lucky Wheel Pro Team",
+    "email": "support@luckywheel.pro",
+    "url": "https://github.com/yourname/lucky-wheel-pro"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourname/lucky-wheel-pro.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourname/lucky-wheel-pro/issues"
+  },
+  "homepage": "https://github.com/yourname/lucky-wheel-pro#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.14.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "compression": "^1.7.4",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "config": {
+    "port": 2307,
+    "max_players": 100,
+    "spin_cooldown": 3000
+  },
+  "optionalDependencies": {
+    "sharp": "^0.32.6"
+  }
+}
