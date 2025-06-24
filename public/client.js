@@ -41,3 +41,40 @@ function createConfetti() {
     }
 }
 
+// Canvas setup
+const canvas = document.getElementById('wheelCanvas');
+const ctx = canvas.getContext('2d');
+const center = { x: canvas.width / 2, y: canvas.height / 2 };
+const radius = 160;
+let currentRotation = 0;
+
+function drawWheel(angle) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const segmentAngle = (2 * Math.PI) / 5;
+
+    ['1000$', '500$', '200$', '100$', 'Chúc may mắn'].forEach((reward, index) => {
+        const startAngle = index * segmentAngle + angle;
+        const endAngle = (index + 1) * segmentAngle + angle;
+
+        ctx.beginPath();
+        ctx.moveTo(center.x, center.y);
+        ctx.arc(center.x, center.y, radius, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fillStyle = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ce79', '#f7e987'][index];
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(center.x, center.y);
+        ctx.rotate(startAngle + segmentAngle / 2);
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 16px Nunito';
+        ctx.fillText(reward, radius * 0.7, 5);
+        ctx.restore();
+    });
+}
+
+drawWheel(0);
