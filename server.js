@@ -167,5 +167,20 @@ wss.on('connection', (ws) => {
     ws.on('error', (error) => console.error('❌ Lỗi WebSocket:', error));
 });
 
+app.get('/api/stats', (req, res) => res.json(gameStats));
+app.get('/api/rewards', (req, res) => res.json(rewards));
+app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use('/', express.static(__dirname));
+app.get('/', (req, res) => res.redirect('/public/index.html'));
+
+setInterval(saveStats, 5 * 60 * 1000);
+process.on('SIGINT', () => {
+    console.log('\n🔄 Đang lưu thống kê và tắt server...', new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }));
+    saveStats();
+    process.exit(0);
+});
+
+const PORT = process.env.PORT || 2307;
+server.listen(PORT, () => console.log(`✅ Server đang chạy tại http://localhost:${PORT} lúc`, new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })));
 
 
