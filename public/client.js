@@ -78,3 +78,91 @@ function drawWheel(angle) {
 }
 
 drawWheel(0);
+
+// WebSocket connection
+function connectWebSocket() {
+    socket.onopen = () => {
+        console.log('✅ Kết nối WebSocket thành công lúc', new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }));
+        reconnectAttempts = 0;
+        updateStatus('🟢 Kết nối thành công - Sẵn sàng chơi!', 'success');
+        enableSpinButton();
+        socket.send(JSON.stringify({ type: 'sync_history' }));
+    };
+
+    socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        handleServerMessage(data);
+    };
+
+    socket.onclose = () => {
+        console.log('❌ Kết nối bị ngắt lúc', new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }));
+        updateStatus('🔴 Mất kết nối - Đang thử kết nối lại...', 'error');
+        disableSpinButton();
+        attemptReconnect();
+    };
+
+    socket.onerror = (error) => {
+        console.error('❌ Lỗi WebSocket:', error);
+        updateStatus('❌ Lỗi kết nối', 'error');
+    };
+}
+
+// Handle server messages
+function handleServerMessage(data) {
+    switch (data.type) {
+        case 'welcome':
+            updateStatus(data.message, 'success');
+            if (data.stats) updateGameStats(data.stats);
+            break;
+        case 'spin_result':
+            handleSpinResult(data);
+            break;
+        case 'players_update':
+            updatePlayersCount(data.playersOnline);
+            break;
+        case 'error':
+            showNotification(data.message, 'error');
+            isSpinning = false;
+            enableSpinButton();
+            break;
+        case 'stats_response':
+            displayDetailedStats(data.stats);
+            break;
+        case 'sync_history':
+            if (data.history) {
+                spinHistory = data.history;
+                updateSpinHistory();
+            }
+            break;
+    }
+}
+
+// Handle spin result
+function handleSpinResult(data) {
+    const { result, angle, spinNumber, timestamp } = data;
+    console.log(`[${new Date(timestamp).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}] Kết quả: ${result.name} (ID: ${result.id})`);
+
+    spinHistory.unshift({
+        id: spinNumber,
+        reward: result.name,
+        timestamp: new Date(timestamp).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }),
+        isWin: result.id !== 5
+    });
+
+    if (spinHistory.length > 10) spinHistory.pop();
+
+    animateWheel(angle / 360 * 2 * Math.PI, () => {
+        displayResult(result);
+        updateSpinHistory();
+        if (result.id !== 5) {
+            playSound(800, 0.5);
+            createConfetti();
+            showNotification(`🎉 Chúc mừng! Bạn đã trúng ${result.name}!`, 'success');
+        } else {
+            playSound(200, 0.3);
+            showNotification('😢 Chúc may mắn lần sau!', 'info');
+        }
+        isSpinning = false;
+        enableSpinButton();
+    });
+}
