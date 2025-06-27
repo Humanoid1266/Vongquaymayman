@@ -197,3 +197,84 @@ function spinWheel() {
     playSound(400, 0.2);
     socket.send(JSON.stringify({ type: 'spin' }));
 }
+
+// UI Updates
+function updateStatus(message, type = 'info') {
+    const statusEl = document.getElementById('status');
+    statusEl.textContent = message;
+    statusEl.className = `status ${type}`;
+}
+
+function updateGameStats(stats) {
+    document.getElementById('totalSpins').textContent = stats.totalSpins || 0;
+    document.getElementById('playersOnline').textContent = stats.playersOnline || 0;
+}
+
+function updatePlayersCount(count) {
+    document.getElementById('playersOnline').textContent = count;
+}
+
+function displayResult(result) {
+    const resultEl = document.getElementById('result');
+    resultEl.innerHTML = `
+        <div class="result-content">
+            <div class="result-icon">${result.id !== 5 ? '🎉' : '😔'}</div>
+            <div class="result-text">${result.name}</div>
+        </div>
+    `;
+    resultEl.className = `result ${result.id !== 5 ? 'win' : 'lose'}`;
+    setTimeout(() => updateStatus('🟢 Sẵn sàng - Nhấn để quay tiếp!', 'success'), 2000);
+}
+
+function updateSpinHistory() {
+    const historyEl = document.getElementById('spinHistory');
+    historyEl.innerHTML = spinHistory.length ? spinHistory.map(spin => `
+        <div class="history-item ${spin.isWin ? 'win' : 'lose'}">
+            <span class="history-time">${spin.timestamp}</span>
+            <span class="history-result">${spin.reward}</span>
+        </div>
+    `).join('') : '<div class="history-item"><span class="history-time">--:--:--</span><span class="history-result">Chưa có dữ liệu</span></div>';
+}
+
+function enableSpinButton() {
+    console.log("✅ enableSpinButton chạy đến đây rồi");
+    const btn = document.getElementById('spinButton');
+    if (!btn) {
+        console.error("❌ Không tìm thấy nút spinButton");
+        return;
+    }
+    btn.disabled = false;
+    btn.textContent = 'QUAY NGAY!';
+}
+
+function disableSpinButton() {
+    document.getElementById('spinButton').disabled = true;
+    document.getElementById('spinButton').textContent = 'Đang quay...';
+}
+
+// Notifications
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.classList.add('show'), 100);
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Reconnection logic
+function attemptReconnect() {
+    if (reconnectAttempts >= maxReconnectAttempts) {
+        updateStatus('❌ Không thể kết nối lại. Vui lòng tải lại trang.', 'error');
+        return;
+    }
+    reconnectAttempts++;
+    const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 10000);
+    setTimeout(() => {
+        updateStatus(`🔄 Thử kết nối lại... (${reconnectAttempts}/${maxReconnectAttempts})`, 'info');
+        connectWebSocket();
+    }, delay);
+}
