@@ -166,3 +166,34 @@ function handleSpinResult(data) {
         enableSpinButton();
     });
 }
+
+// Animate wheel
+function animateWheel(targetAngle, callback) {
+    const duration = 3000;
+    const startTime = Date.now();
+
+    function animate() {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        currentRotation = easeOut * targetAngle;
+
+        drawWheel(currentRotation);
+
+        if (progress < 1) requestAnimationFrame(animate);
+        else callback();
+    }
+    animate();
+}
+
+// Spin wheel
+function spinWheel() {
+    
+    if (socket.readyState !== WebSocket.OPEN || isSpinning) return;
+
+    isSpinning = true;
+    disableSpinButton();
+    updateStatus('⏳ Đang quay...', 'info');
+    playSound(400, 0.2);
+    socket.send(JSON.stringify({ type: 'spin' }));
+}
