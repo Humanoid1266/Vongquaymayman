@@ -278,3 +278,69 @@ function attemptReconnect() {
         connectWebSocket();
     }, delay);
 }
+
+// Statistics modal
+function toggleStats() {
+    const modal = document.getElementById('statsModal');
+    modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+    if (modal.style.display === 'block') socket.send(JSON.stringify({ type: 'get_stats' }));
+}
+
+function displayDetailedStats(stats) {
+    const statsContent = document.getElementById('statsContent');
+    const rewardStats = Object.entries(stats.rewardStats || {}).map(([id, count]) => {
+        const reward = { id: parseInt(id), name: ['100$', '200$', '500$', '1000$', 'Chúc may mắn'][parseInt(id) - 1] || `Reward ${id}` };
+        const percentage = stats.totalSpins > 0 ? ((count / stats.totalSpins) * 100).toFixed(1) : 0;
+        return `
+            <div class="stat-row">
+                <span>${reward.name}</span>
+                <span>${count} lần (${percentage}%)</span>
+            </div>
+        `;
+    }).join('');
+    
+    statsContent.innerHTML = `
+        <div class="stats-section">
+            <h3>📊 Thống kê tổng quan</h3>
+            <div class="stat-row"><span>Tổng lượt quay:</span><span>${stats.totalSpins || 0}</span></div>
+            <div class="stat-row"><span>Người chơi online:</span><span>${stats.playersOnline || 0}</span></div>
+        </div>
+        <div class="stats-section">
+            <h3>🎁 Thống kê phần thưởng</h3>
+            ${rewardStats}
+        </div>
+    `;
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🎮 Khởi tạo game lúc', new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }));
+    
+    // Khởi tạo WebSocket sau khi DOM sẵn sàng
+    socket = new WebSocket(`ws://${window.location.host}`);
+    
+    connectWebSocket(); // Truyền socket đã khởi tạo
+    window.addEventListener('click', (e) => {
+        const modal = document.getElementById('statsModal');
+        if (e.target === modal) modal.style.display = 'none';
+    });
+
+    // Load local history
+    const savedHistory = localStorage.getItem('spinHistory');
+    if (savedHistory) {
+        spinHistory = JSON.parse(savedHistory);
+        updateSpinHistory();
+    }
+});
+
+// Auto-save local history (for backup)
+setInterval(() => localStorage.setItem('spinHistory', JSON.stringify(spinHistory.slice(0, 5))), 30000);
+
+// Load local history
+document.addEventListener('DOMContentLoaded', () => {
+    const savedHistory = localStorage.getItem('spinHistory');
+    if (savedHistory) {
+        spinHistory = JSON.parse(savedHistory);
+        updateSpinHistory();
+    }
+});
