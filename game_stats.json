@@ -1,0 +1,245 @@
+{
+  "totalSpins": 58,
+  "playersOnline": 39,
+  "rewardStats": {
+    "1": 15,
+    "2": 15,
+    "3": 14,
+    "4": 7,
+    "5": 7
+  },
+  "dailyStats": {
+    "2025-06-22": 50,
+    "2025-06-23": 8
+  },
+  "spinHistory": [
+    {
+      "id": 58,
+      "reward": "200$",
+      "timestamp": "20:55:44 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 57,
+      "reward": "500$",
+      "timestamp": "20:55:23 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 56,
+      "reward": "1000$",
+      "timestamp": "20:55:18 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 55,
+      "reward": "100$",
+      "timestamp": "20:55:15 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 54,
+      "reward": "Chúc may mắn",
+      "timestamp": "20:55:06 23/6/2025",
+      "isWin": false
+    },
+    {
+      "id": 53,
+      "reward": "500$",
+      "timestamp": "09:30:48 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 52,
+      "reward": "200$",
+      "timestamp": "09:30:39 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 51,
+      "reward": "100$",
+      "timestamp": "09:30:23 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 50,
+      "reward": "200$",
+      "timestamp": "00:06:56 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 49,
+      "reward": "Chúc may mắn",
+      "timestamp": "00:06:39 23/6/2025",
+      "isWin": false
+    },
+    {
+      "id": 48,
+      "reward": "500$",
+      "timestamp": "00:06:35 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 47,
+      "reward": "500$",
+      "timestamp": "00:06:31 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 46,
+      "reward": "200$",
+      "timestamp": "00:06:28 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 45,
+      "reward": "200$",
+      "timestamp": "00:06:24 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 44,
+      "reward": "200$",
+      "timestamp": "00:06:20 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 43,
+      "reward": "200$",
+      "timestamp": "00:06:17 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 42,
+      "reward": "200$",
+      "timestamp": "00:06:13 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 41,
+      "reward": "1000$",
+      "timestamp": "00:06:10 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 40,
+      "reward": "100$",
+      "timestamp": "00:06:05 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 39,
+      "reward": "100$",
+      "timestamp": "00:05:50 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 38,
+      "reward": "200$",
+      "timestamp": "00:05:45 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 37,
+      "reward": "100$",
+      "timestamp": "00:05:33 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 36,
+      "reward": "500$",
+      "timestamp": "00:05:30 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 35,
+      "reward": "500$",
+      "timestamp": "00:05:25 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 34,
+      "reward": "200$",
+      "timestamp": "00:04:54 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 33,
+      "reward": "200$",
+      "timestamp": "00:04:50 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 32,
+      "reward": "1000$",
+      "timestamp": "00:01:02 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 31,
+      "reward": "1000$",
+      "timestamp": "00:00:58 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 30,
+      "reward": "200$",
+      "timestamp": "00:00:54 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 29,
+      "reward": "500$",
+      "timestamp": "00:00:50 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 28,
+      "reward": "1000$",
+      "timestamp": "00:00:35 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 27,
+      "reward": "500$",
+      "timestamp": "00:00:30 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 26,
+      "reward": "100$",
+      "timestamp": "00:00:23 23/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 25,
+      "reward": "100$",
+      "timestamp": "23:56:50 22/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 24,
+      "reward": "1000$",
+      "timestamp": "23:56:42 22/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 23,
+      "reward": "Chúc may mắn",
+      "timestamp": "23:41:23 22/6/2025",
+      "isWin": false
+    },
+    {
+      "id": 22,
+      "reward": "500$",
+      "timestamp": "23:41:16 22/6/2025",
+      "isWin": true
+    },
+    {
+      "id": 21,
+      "reward": "200$",
+      "timestamp": "23:41:12 22/6/2025",
+      "isWin": true
+    }
+  ]
+}
