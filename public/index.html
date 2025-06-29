@@ -33,5 +33,50 @@
                 </div>
             </div>
         </div>
-  </body>               
         
+        <div class="sidebar">
+            <h3>📊 Thống kê trực tiếp</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div id="totalSpins" class="stat-number">0</div>
+                    <div class="stat-label">Tổng lượt quay</div>
+                </div>
+                <div class="stat-card">
+                    <div id="playersOnline" class="stat-number">0</div>
+                    <div class="stat-label">Số lần truy cập</div>
+                </div>
+            </div>
+            
+            <div class="history-section">
+                <h3>📜 Lịch sử gần đây</h3>
+                <div id="spinHistory" class="spin-history">
+                    <div class="history-item">
+                        <span class="history-time">--:--:--</span>
+                        <span class="history-result">Chưa có dữ liệu</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn-secondary" onclick="toggleStats()">📈 Thống kê chi tiết</button>
+                <button class="btn-secondary" onclick="location.reload()">🔄 Tải lại</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Modal -->
+    <div id="statsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 Thống kê chi tiết</h2>
+                <span class="close" onclick="toggleStats()">×</span>
+            </div>
+            <div id="statsContent">
+                <p>Đang tải thống kê...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/public/client.js"></script>
+</body>
+</html>

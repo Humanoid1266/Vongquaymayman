@@ -60,3 +60,127 @@ function loadStats() {
 
 loadStats();
 
+function getRandomReward() {
+    const rand = Math.random();
+    let cumulativeProb = 0;
+    for (const reward of rewards) {
+        cumulativeProb += reward.probability;
+        if (rand <= cumulativeProb) return reward;
+    }
+    return rewards[rewards.length - 1];
+}
+
+function calculateWheelAngle(rewardId) {
+    const index = rewardId - 1; // vì mảng bắt đầu từ ID 1
+    const segmentCount = 5;
+    const segmentAngle = 360 / segmentCount;
+    const baseAngle = index * segmentAngle + segmentAngle / 2;
+    const randomSpins = Math.floor(Math.random() * 3 + 5) * 360;
+    const randomOffset = Math.random() * 10 - 5; // +/- 5 độ để tránh cứng góc
+    return randomSpins + baseAngle + randomOffset;
+}
+
+const rateLimiter = new Map();
+
+function isRateLimited(ws) {
+    const now = Date.now();
+    const lastSpin = rateLimiter.get(ws) || 0;
+    const cooldown = 3000;
+    if (now - lastSpin < cooldown) return true;
+    rateLimiter.set(ws, now);
+    return false;
+}
+
+function broadcast(data) {
+    wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) client.send(JSON.stringify(data));
+    });
+}
+
+wss.on('connection', (ws) => {
+    gameStats.playersOnline++;
+    console.log(`✅ Người chơi mới kết nối. Online: ${gameStats.playersOnline} lúc`, new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }));
+
+    ws.send(JSON.stringify({
+        type: 'welcome',
+        message: '🎮 Chào mừng đến với Vòng Quay May Mắn!',
+        stats: { totalSpins: gameStats.totalSpins, playersOnline: gameStats.playersOnline }
+    }));
+
+    broadcast({ type: 'players_update', playersOnline: gameStats.playersOnline });
+
+    ws.on('message', (msg) => {
+        try {
+            const data = JSON.parse(msg);
+            if (data.type === 'spin') {
+                if (isRateLimited(ws)) {
+                    ws.send(JSON.stringify({ type: 'error', message: '⏰ Vui lòng đợi 3 giây trước khi quay tiếp!' }));
+                    return;
+                }
+
+                const result = getRandomReward();
+                const angle = calculateWheelAngle(result.id);
+
+                gameStats.totalSpins++;
+                gameStats.rewardStats[result.id]++;
+                const today = new Date().toISOString().split('T')[0];
+                gameStats.dailyStats[today] = (gameStats.dailyStats[today] || 0) + 1;
+
+                // Lưu lịch sử toàn cục (giới hạn 50 lượt gần nhất)
+                gameStats.spinHistory.unshift({
+                    id: gameStats.totalSpins,
+                    reward: result.name,
+                    timestamp: new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }),
+                    isWin: result.id !== 5
+                });
+                if (gameStats.spinHistory.length > 50) gameStats.spinHistory.pop();
+
+                console.log(`🎯 Lần quay #${gameStats.totalSpins}: ${result.name} (ID: ${result.id})`);
+
+                broadcast({
+                    type: 'spin_result',
+                    result,
+                    angle,
+                    spinNumber: gameStats.totalSpins,
+                    timestamp: Date.now()
+                });
+
+                if (gameStats.totalSpins % 10 === 0) saveStats();
+            } else if (data.type === 'get_stats') {
+                ws.send(JSON.stringify({ type: 'stats_response', stats: gameStats }));
+            } else if (data.type === 'sync_history') {
+                ws.send(JSON.stringify({ type: 'sync_history', history: gameStats.spinHistory.slice(0, 10) }));
+            }
+        } catch (error) {
+            console.error('❌ Lỗi xử lý tin nhắn:', error);
+            ws.send(JSON.stringify({ type: 'error', message: 'Có lỗi xảy ra, vui lòng thử lại!' }));
+        }
+    });
+
+    ws.on('close', () => {
+        gameStats.playersOnline = Math.max(0, gameStats.playersOnline - 1);
+        console.log(`❌ Người chơi ngắt kết nối. Online: ${gameStats.playersOnline} lúc`, new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }));
+        rateLimiter.delete(ws);
+        broadcast({ type: 'players_update', playersOnline: gameStats.playersOnline });
+    });
+
+    ws.on('error', (error) => console.error('❌ Lỗi WebSocket:', error));
+});
+
+app.get('/api/stats', (req, res) => res.json(gameStats));
+app.get('/api/rewards', (req, res) => res.json(rewards));
+app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use('/', express.static(__dirname));
+app.get('/', (req, res) => res.redirect('/public/index.html'));
+
+setInterval(saveStats, 5 * 60 * 1000);
+process.on('SIGINT', () => {
+    console.log('\n🔄 Đang lưu thống kê và tắt server...', new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }));
+    saveStats();
+    process.exit(0);
+});
+
+const PORT = process.env.PORT || 2307;
+server.listen(PORT, () => console.log(`✅ Server đang chạy tại http://localhost:${PORT} lúc`, new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })));
+
+
